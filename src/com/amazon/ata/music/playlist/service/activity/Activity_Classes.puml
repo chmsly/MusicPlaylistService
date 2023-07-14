@@ -1,0 +1,24 @@
+@startuml
+
+class GetPlaylistActivity {
+  + handleRequest(): PlaylistModel
+}
+
+class CreatePlaylistActivity {
+  + handleRequest(): PlaylistModel
+}
+
+class PlaylistDao {
+  + savePlaylist(playlist: Playlist): void
+}
+
+class ModelConverter {
+  + toPlaylistModel(playlist: Playlist): PlaylistModel
+}
+
+GetPlaylistActivity ..> PlaylistDao
+GetPlaylistActivity ..> ModelConverter
+CreatePlaylistActivity ..> PlaylistDao
+CreatePlaylistActivity ..> ModelConverter
+
+@enduml
