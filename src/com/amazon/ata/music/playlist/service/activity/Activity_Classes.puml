@@ -1,24 +1,71 @@
 @startuml
-
-class GetPlaylistActivity {
-  + handleRequest(): PlaylistModel
+package musicplaylistservice {
+  class Playlist {
+    id: String
+    name: String
+    description: String
+    songs: List<Song>
+    tags: Set<String>
+    + albumId: String
+  }
+  class Song {
+    id: String
+    title: String
+    artist: String
+    album: String
+  }
+  Playlist o-- Song
+  Playlist o-- AlbumTrack
 }
-
-class CreatePlaylistActivity {
-  + handleRequest(): PlaylistModel
+package dao {
+  class AlbumTrackDao {
+    getAlbumTracks(albumId: String): List<AlbumTrack>
+  }
+  class PlaylistDao {
+    getPlaylist(playlistId: String): Playlist
+  }
+  AlbumTrackDao ..> PlaylistDao
 }
-
-class PlaylistDao {
-  + savePlaylist(playlist: Playlist): void
+package activity {
+  class GetPlaylistActivity {
+    handleRequest(): PlaylistModel
+  }
+  class CreatePlaylistActivity {
+    handleRequest(): PlaylistModel
+  }
+  class UpdatePlaylistActivity {
+    handleRequest(): PlaylistModel
+  }
+  class DeletePlaylistActivity {
+    handleRequest(): void
+  }
+  class AddSongToPlaylistActivity {
+    handleRequest(): PlaylistModel
+  }
+      GetPlaylistActivity --o PlaylistDao
+      GetPlaylistActivity --o ModelConverter
+      CreatePlaylistActivity --o PlaylistDao
+      CreatePlaylistActivity --o ModelConverter
+      UpdatePlaylistActivity --o PlaylistDao
+      UpdatePlaylistActivity --o ModelConverter
+      DeletePlaylistActivity --o PlaylistDao
+      AddSongToPlaylistActivity --o PlaylistDao
+      AddSongToPlaylistActivity --o ModelConverter
+      AddSongToPlaylistActivity --o AlbumTrackDao
 }
-
-class ModelConverter {
-  + toPlaylistModel(playlist: Playlist): PlaylistModel
+package models {
+  class PlaylistModel {
+    id: String
+    name: String
+    description: String
+    songs: List<Song>
+    tags: Set<String>
+  }
 }
-
-GetPlaylistActivity ..> PlaylistDao
-GetPlaylistActivity ..> ModelConverter
-CreatePlaylistActivity ..> PlaylistDao
-CreatePlaylistActivity ..> ModelConverter
-
+package utils {
+  class MusicServicePlaylistUtils {
+    generatePlaylistId(): String
+    validatePlaylistName(playlistName: String): boolean
+  }
+}
 @enduml

@@ -1,11 +1,13 @@
 @startuml
-'https://plantuml.com/sequence-diagram
 
-autonumber
+class AlbumTrackDao {
+  + getAlbumTracks(albumId: String): List<AlbumTrack>
+}
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+class PlaylistDao {
+  + getPlaylist(playlistId: String): Playlist
+}
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+AlbumTrackDao ..> PlaylistDao
+
 @enduml
