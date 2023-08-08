@@ -32,6 +32,19 @@ public class Playlist {
         return customerId;
     }
 
+    @DynamoDBAttribute(attributeName = "songCount")
+    public Integer getSongCount() {
+        return songCount;
+    }
+
+    public void setSongCount(Integer songCount) {
+        this.songCount = songCount;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
     @DynamoDBAttribute(attributeName = "name")
     public String getName() {
         return name;

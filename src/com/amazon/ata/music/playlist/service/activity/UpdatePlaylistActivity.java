@@ -1,14 +1,22 @@
 package com.amazon.ata.music.playlist.service.activity;
 
+import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
+import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeChangeException;
+import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeValueException;
+import com.amazon.ata.music.playlist.service.exceptions.PlaylistNotFoundException;
 import com.amazon.ata.music.playlist.service.models.PlaylistModel;
 import com.amazon.ata.music.playlist.service.models.requests.UpdatePlaylistRequest;
 import com.amazon.ata.music.playlist.service.models.results.UpdatePlaylistResult;
 import com.amazon.ata.music.playlist.service.dynamodb.PlaylistDao;
 
+import com.amazon.ata.music.playlist.service.util.MusicPlaylistServiceUtils;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
+
 
 /**
  * Implementation of the UpdatePlaylistActivity for the MusicPlaylistService's UpdatePlaylist API.
@@ -24,9 +32,11 @@ public class UpdatePlaylistActivity implements RequestHandler<UpdatePlaylistRequ
      *
      * @param playlistDao PlaylistDao to access the playlist table.
      */
+    @Inject
     public UpdatePlaylistActivity(PlaylistDao playlistDao) {
         this.playlistDao = playlistDao;
     }
+
 
     /**
      * This method handles the incoming request by retrieving the playlist, updating it,
@@ -48,10 +58,35 @@ public class UpdatePlaylistActivity implements RequestHandler<UpdatePlaylistRequ
      */
     @Override
     public UpdatePlaylistResult handleRequest(final UpdatePlaylistRequest updatePlaylistRequest, Context context) {
+
         log.info("Received UpdatePlaylistRequest {}", updatePlaylistRequest);
 
-        return UpdatePlaylistResult.builder()
-                .withPlaylist(new PlaylistModel())
-                .build();
+        String customerId = updatePlaylistRequest.getCustomerId();
+        String playlistId = updatePlaylistRequest.getId();
+
+        if(!MusicPlaylistServiceUtils.isValidString(customerId)) {
+            throw new RuntimeException("Invalid customer ID.");
+        }
+
+        if(!MusicPlaylistServiceUtils.isValidString(updatePlaylistRequest.getName())) {
+            throw new InvalidAttributeChangeException("Invalid customer Name.");
+        }
+
+        Playlist playlist = playlistDao.getPlaylist(playlistId);
+
+        if (playlist == null) {
+            throw new PlaylistNotFoundException("Playlist not found");
+        }
+
+        playlist.setName(updatePlaylistRequest.getName());
+
+        playlistDao.savePlaylist(playlist);
+
+
+
+            return UpdatePlaylistResult.builder()
+                    .withPlaylist(new PlaylistModel())
+                    .build();
+
     }
 }

@@ -1,16 +1,9 @@
 package com.amazon.ata.music.playlist.service.exceptions;
 
-/**
- * Exception to throw when a provided value has invalid attribute values.
- */
-public class InvalidAttributeValueException extends PlaylistNotFoundException {
+public class InvalidAttributeChangeException extends PlaylistNotFoundException {
+    private static final long serialVersionUID = 8007453316698012849L;
 
-    private static final long serialVersionUID = 8007453316698012851L;
-
-    /**
-     * Exception with no message or cause.
-     */
-    public InvalidAttributeValueException() {
+    public InvalidAttributeChangeException() {
         super();
     }
 
@@ -18,7 +11,7 @@ public class InvalidAttributeValueException extends PlaylistNotFoundException {
      * Exception with a message, but no cause.
      * @param message A descriptive message for this exception.
      */
-    public InvalidAttributeValueException(String message) {
+    public InvalidAttributeChangeException(String message) {
         super(message);
     }
 
@@ -26,7 +19,7 @@ public class InvalidAttributeValueException extends PlaylistNotFoundException {
      * Exception with no message, but with a cause.
      * @param cause The original throwable resulting in this exception.
      */
-    public InvalidAttributeValueException(Throwable cause) {
+    public InvalidAttributeChangeException(Throwable cause) {
         super(cause);
     }
 
@@ -35,7 +28,8 @@ public class InvalidAttributeValueException extends PlaylistNotFoundException {
      * @param message A descriptive message for this exception.
      * @param cause The original throwable resulting in this exception.
      */
-    public InvalidAttributeValueException(String message, Throwable cause) {
+    public InvalidAttributeChangeException(String message, Throwable cause) {
         super(message, cause);
     }
 }
+
