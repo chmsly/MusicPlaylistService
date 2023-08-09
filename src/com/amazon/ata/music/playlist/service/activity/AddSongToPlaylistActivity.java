@@ -60,46 +60,71 @@ public class AddSongToPlaylistActivity implements RequestHandler<AddSongToPlayli
      *                                 API defined {@link SongModel}s
      */
     @Override
+//    public AddSongToPlaylistResult handleRequest(final AddSongToPlaylistRequest addSongToPlaylistRequest, Context context) {
+//        log.info("Received AddSongToPlaylistRequest {} ", addSongToPlaylistRequest);
+//
+//        String playlistId = addSongToPlaylistRequest.getId();
+//
+//        String asin = addSongToPlaylistRequest.getAsin();
+//
+//        int trackNumber = addSongToPlaylistRequest.getTrackNumber();
+//
+//        Playlist playlist = playlistDao.getPlaylist(playlistId);
+//
+//        AlbumTrack albumTrack = albumTrackDao.getAlbumTrack(asin, trackNumber);
+//
+//        boolean isQueueNext = addSongToPlaylistRequest.isQueueNext();
+//
+//        if (albumTrack == null) {
+//            throw new AlbumTrackNotFoundException("Invalid album track.");
+//        }
+//
+//        if (playlist == null) {
+//            throw new PlaylistNotFoundException("Playlist not found");
+//        }
+//
+//
+//        if (isQueueNext = true) {
+//            playlist.getSongList().add(0, albumTrack);
+//        } else {
+//            playlist.getSongList().add(albumTrack);
+//        }
+//
+//        playlist.setSongCount(playlist.getSongList().size());
+//
+//        playlistDao.savePlaylist(playlist);
+//
+//        albumTrackDao.saveAlbumTrack(albumTrack);
+//
+//        // If the optional queueNext parameter is provided and is true, this API will insert the new song to the front of the playlist so that it will be the next song played
+//        // after adding song to linked list,
+//        return AddSongToPlaylistResult.builder()
+//                .withSongList(ModelConverter.toSongModel(playlist.getSongList()))
+//                .build();
+//    }
+//}
+
     public AddSongToPlaylistResult handleRequest(final AddSongToPlaylistRequest addSongToPlaylistRequest, Context context) {
         log.info("Received AddSongToPlaylistRequest {} ", addSongToPlaylistRequest);
+        Playlist playlist = playlistDao.getPlaylist(addSongToPlaylistRequest.getId());
+        AlbumTrack albumTrack = albumTrackDao.getAlbumTrack(addSongToPlaylistRequest.getAsin(),addSongToPlaylistRequest.getTrackNumber());
 
-        String playlistId = addSongToPlaylistRequest.getId();
 
-        String asin = addSongToPlaylistRequest.getAsin();
-
-        int trackNumber = addSongToPlaylistRequest.getTrackNumber();
-
-        Playlist playlist = playlistDao.getPlaylist(playlistId);
-
-        AlbumTrack albumTrack = albumTrackDao.getAlbumTrack(asin, trackNumber);
-
-        boolean isQueueNext = addSongToPlaylistRequest.isQueueNext();
-
-        if (albumTrack == null) {
-            throw new AlbumTrackNotFoundException("Invalid album track.");
+        if (albumTrack == null){
+            throw new AlbumTrackNotFoundException();
         }
-
-        if (playlist == null) {
-            throw new PlaylistNotFoundException("Playlist not found");
+        if (playlist == null){
+            throw new PlaylistNotFoundException();
         }
-
-
-        if (isQueueNext = true) {
+        if (addSongToPlaylistRequest.isQueueNext()){
             playlist.getSongList().add(0, albumTrack);
-        } else {
+        }else {
             playlist.getSongList().add(albumTrack);
         }
 
-
-
-        playlist.setSongCount(playlist.getSongList().size());
-
+        albumTrackDao.saveAlbumTrack(albumTrack);
         playlistDao.savePlaylist(playlist);
 
-        albumTrackDao.saveAlbumTrack(albumTrack);
-
-        // If the optional queueNext parameter is provided and is true, this API will insert the new song to the front of the playlist so that it will be the next song played
-        // after adding song to linked list,
         return AddSongToPlaylistResult.builder()
                 .withSongList(ModelConverter.toSongModel(playlist.getSongList()))
                 .build();
