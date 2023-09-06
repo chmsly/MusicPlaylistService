@@ -1,5 +1,6 @@
 package com.amazon.ata.music.playlist.service.activity;
 
+import com.amazon.ata.aws.dynamodb.DynamoDbClientProvider;
 import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeChangeException;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeValueException;
@@ -10,6 +11,8 @@ import com.amazon.ata.music.playlist.service.models.results.UpdatePlaylistResult
 import com.amazon.ata.music.playlist.service.dynamodb.PlaylistDao;
 
 import com.amazon.ata.music.playlist.service.util.MusicPlaylistServiceUtils;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +38,11 @@ public class UpdatePlaylistActivity implements RequestHandler<UpdatePlaylistRequ
     @Inject
     public UpdatePlaylistActivity(PlaylistDao playlistDao) {
         this.playlistDao = playlistDao;
+    }
+
+
+    public UpdatePlaylistActivity() {
+        this.playlistDao = new PlaylistDao (new DynamoDBMapper(DynamoDbClientProvider.getDynamoDBClient(Regions.US_WEST_2)));
     }
 
 

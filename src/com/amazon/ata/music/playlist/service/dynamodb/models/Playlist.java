@@ -27,7 +27,7 @@ public class Playlist {
         return id;
     }
 
-    @DynamoDBRangeKey
+    @DynamoDBAttribute (attributeName = "customerId")
     public String getCustomerId() {
         return customerId;
     }
